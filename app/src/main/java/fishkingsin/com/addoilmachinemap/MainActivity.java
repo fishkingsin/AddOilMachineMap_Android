@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import com.mapbox.mapboxsdk.api.ILatLng;
 import com.mapbox.mapboxsdk.views.MapView;
 import com.mapbox.mapboxsdk.tileprovider.tilesource.MapboxTileLayer;
-import com.loopj.android.http.*;
+//import com.loopj.android;
 
 public class MainActivity extends ActionBarActivity {
     static final String kAPIScheme_HTTP     = "http://";
@@ -47,29 +47,29 @@ public class MainActivity extends ActionBarActivity {
         mapView.setCenter(center);
         this.setContentView(mapView);
 
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.get("http://www.google.com", new AsyncHttpResponseHandler() {
-
-            @Override
-            public void onStart() {
-                // called before request is started
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                // called when response HTTP status is "200 OK"
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        });
+//        AsyncHttpClient client = new AsyncHttpClient();
+//        client.get("http://www.google.com", new AsyncHttpResponseHandler() {
+//
+//            @Override
+//            public void onStart() {
+//                // called before request is started
+//            }
+//
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+//                // called when response HTTP status is "200 OK"
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+//                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+//            }
+//
+//            @Override
+//            public void onRetry(int retryNo) {
+//                // called when request is retried
+//            }
+//        });
     }
 
 

@@ -27,5 +27,5 @@ dependencies {
     compile ('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.2@aar'){
         transitive=true
     }
-    compile 'com.loopj.android:android-async-http:1.4.5'
+    compile 'com.loopj.android:android-async-http:1.4.6'
 }
