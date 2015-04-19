@@ -3,19 +3,31 @@ package fishkingsin.com.addoilmachinemap;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.MarkerManager;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
+
 import com.loopj.android.http.*;
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-public class MapsActivity extends FragmentActivity {
+
+import java.util.Collection;
+
+public class MapsActivity extends FragmentActivity implements ClusterManager.OnClusterItemClickListener<MessageItem>,
+        ClusterManager.OnClusterClickListener, GoogleMap.OnMarkerClickListener
+ {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     static final String TAG_MAIN_VIEW = "MainActivity";
@@ -25,6 +37,7 @@ public class MapsActivity extends FragmentActivity {
     static final String kGMpaURL       = "/projects/basara/js/gmap.json";
     static final String kAPIScheme = kAPIScheme_HTTP;
     static final String kBaseURL = kDevServerURL;
+    private ClusterManager<MessageItem> mClusterManager;
     JSONObject allMessage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,22 +67,26 @@ public class MapsActivity extends FragmentActivity {
      * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
      * method in {@link #onResume()} to guarantee that it will be called.
      */
+
+
+    protected GoogleMap getMap() {
+        setUpMapIfNeeded();
+        return mMap;
+    }
+
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
+
             // Try to obtain the map from the SupportMapFragment.
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
+
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                CameraUpdate center=
-                        CameraUpdateFactory.newLatLng(new LatLng(22.2796095,114.1661851));
-                CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
-
-                mMap.moveCamera(center);
-                mMap.animateCamera(zoom);
 
                 setUpMap();
+
             }
         }
     }
@@ -81,7 +98,21 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
-//        mMap.addMarker(new MarkerOptions().position(new LatLng(22.2796095,114.1661851)).title("Hong Kong"));
+        CameraUpdate center=
+                CameraUpdateFactory.newLatLng(new LatLng(22.2796095,114.1661851));
+        CameraUpdate zoom=CameraUpdateFactory.zoomTo(15);
+
+        getMap().moveCamera(center);
+        getMap().animateCamera(zoom);
+
+        mClusterManager = new ClusterManager<MessageItem>(this, getMap());
+
+
+        mClusterManager.setOnClusterItemClickListener(this);
+        mClusterManager.setOnClusterClickListener(this);
+
+        getMap().setOnCameraChangeListener(mClusterManager);
+        getMap().setOnMarkerClickListener(this);
         AsyncHttpClient client = new AsyncHttpClient();
         String urlPath = kAPIScheme+kBaseURL+kGMpaURL;
         Log.d(TAG_MAIN_VIEW, "urlPath : " + urlPath);
@@ -107,8 +138,9 @@ public class MapsActivity extends FragmentActivity {
                         if (jsonArray != null) {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject o = (JSONObject) jsonArray.get(i);
-                                mMap.addMarker(new MarkerOptions().position(new LatLng(o.getDouble("lat"), o.getDouble("lng"))).title(o.getString("name")));
-
+                                LatLng position = new LatLng(o.getDouble("lat"), o.getDouble("lng"));
+                                MessageItem offsetItem = new MessageItem(position, o.getString("message"), o.getString("name"), o.getString("location"));
+                                mClusterManager.addItem(offsetItem);
                             }
                         }
                     } catch (JSONException e) {
@@ -129,5 +161,25 @@ public class MapsActivity extends FragmentActivity {
                 // called when request is retried
             }
         });
+
+
     }
-}
+
+    public boolean onClusterItemClick(MessageItem messageItem) {
+
+        return false;
+    }
+
+     @Override
+     public boolean onClusterClick(Cluster cluster) {
+
+
+         return false;
+     }
+
+     @Override
+     public boolean onMarkerClick(Marker marker) {
+
+         return false;
+     }
+ }
