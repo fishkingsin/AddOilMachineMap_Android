@@ -1,4 +1,4 @@
-package fishkingsin.com.googlemapexample;
+package fishkingsin.com.addoilmachinemap;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
